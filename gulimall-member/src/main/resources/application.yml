@@ -8,6 +8,13 @@ spring:
     url: jdbc:mysql://192.168.137.14:3306/gulimall_ums?useUnicode=true&characterEncoding=UTF-8&useSSL=false
     username: root
     password: root
+  application:
+    name: gulimall_member
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 192.168.137.14:8848
+
 mybatis-plus:
   global-config:
     db-config:
