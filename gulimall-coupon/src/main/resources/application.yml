@@ -10,7 +10,7 @@ spring:
     password: root
 
   application:
-    name: gulimall_coupon
+    name: gulimall-coupon
   cloud:
     nacos:
       discovery:

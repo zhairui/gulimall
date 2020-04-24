@@ -9,7 +9,7 @@ spring:
     username: root
     password: root
   application:
-    name: gulimall_ware
+    name: gulimall-ware
   cloud:
     nacos:
       discovery:

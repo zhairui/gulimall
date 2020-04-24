@@ -9,7 +9,7 @@ spring:
     username: root
     password: root
   application:
-    name: gulimall_order
+    name: gulimall-order
   cloud:
     nacos:
       discovery:
