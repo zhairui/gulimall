@@ -1,7 +1,9 @@
 package com.bigdata.gulimall.product.controller;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +36,41 @@ public class CategoryController {
     /**
      * 列表
      */
-    @RequestMapping("/list")
-    public R list(@RequestParam Map<String, Object> params){
-        PageUtils page = categoryService.queryPage(params);
+    @RequestMapping("/list/tree")
+    public List<CategoryEntity> list(){
+        List<CategoryEntity> categoryEntities = categoryService.listWithTree();
+        //找到所有的一级分类
+        List<CategoryEntity> level1Menus = categoryEntities.stream()
+                .filter(item -> item.getParentCid() == 0)
+                .map(menu->{
+                    menu.setChildCategoryEntity(getChildrens(menu,categoryEntities));
+                    return menu;
+                })
+                .sorted((menu1, menu2) -> {
 
-        return R.ok().put("page", page);
+                  return (menu1.getSort() ==null ? 0:menu1.getSort())- (menu2.getSort()==null?0:menu2.getSort());
+
+                })
+                .collect(Collectors.toList());
+
+
+
+        return level1Menus;
     }
 
+    public List<CategoryEntity> getChildrens(CategoryEntity root,List<CategoryEntity> all){
+
+        List<CategoryEntity> childrens = all.stream().filter(item -> {
+            return item.getParentCid() == root.getCatId();
+        }).map(item -> {
+            item.setChildCategoryEntity(getChildrens(item, all));
+            return item;
+        }).sorted((menu1, menu2) -> {
+            return (menu1.getSort() ==null ? 0:menu1.getSort())- (menu2.getSort()==null?0:menu2.getSort());
+        }).collect(Collectors.toList());
+
+        return childrens;
+    }
 
     /**
      * 信息
