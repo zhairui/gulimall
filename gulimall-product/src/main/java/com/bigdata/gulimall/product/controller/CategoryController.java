@@ -52,22 +52,21 @@ public class CategoryController {
 
                 })
                 .collect(Collectors.toList());
-
-
-
         return level1Menus;
     }
 
     public List<CategoryEntity> getChildrens(CategoryEntity root,List<CategoryEntity> all){
 
         List<CategoryEntity> childrens = all.stream().filter(item -> {
-            return item.getParentCid() == root.getCatId();
+            //请注意这里的两个数据的比较，它们都是Long型的，最好使用equals方法
+            return item.getParentCid().equals(root.getCatId());
         }).map(item -> {
             item.setChildren(getChildrens(item, all));
             return item;
         }).sorted((menu1, menu2) -> {
             return (menu1.getSort() ==null ? 0:menu1.getSort())- (menu2.getSort()==null?0:menu2.getSort());
         }).collect(Collectors.toList());
+
 
         return childrens;
     }
@@ -107,8 +106,10 @@ public class CategoryController {
      */
     @RequestMapping("/delete")
     public R delete(@RequestBody Long[] catIds){
-		categoryService.removeByIds(Arrays.asList(catIds));
+        //删除之前需要判断待删除的菜单那是否被别的地方所引用。
+//		categoryService.removeByIds(Arrays.asList(catIds));
 
+        categoryService.removeMenuByIds(Arrays.asList(catIds));
         return R.ok();
     }
 

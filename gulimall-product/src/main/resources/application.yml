@@ -15,10 +15,13 @@ spring:
       discovery:
         server-addr: 192.168.137.14:8848
 
-
 mybatis-plus:
   global-config:
     db-config:
       id-type: auto
+      logic-delete-value: 1
+      logic-not-delete-value: 0
   mapper-locations: classpath:/mapper/**/*.xml
-
+logging:
+  level:
+    com.bigdata.gulimall.product: debug

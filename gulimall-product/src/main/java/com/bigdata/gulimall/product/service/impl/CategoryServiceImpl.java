@@ -38,4 +38,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return categoryEntities;
     }
 
+    @Override
+    public   void removeMenuByIds(List<Long> asList) {
+        //TODO 检查当前的菜单是否被别的地方所引用
+        categoryDao.deleteBatchIds(asList);
+    }
 }
