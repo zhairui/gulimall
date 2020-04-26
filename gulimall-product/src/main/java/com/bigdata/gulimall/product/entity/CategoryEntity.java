@@ -62,6 +62,6 @@ public class CategoryEntity implements Serializable {
 
 	//子分类，数据库中不存在该字段
 	@TableField(exist = false)
-	private List<CategoryEntity> childCategoryEntity;
+	private List<CategoryEntity> children;
 
 }

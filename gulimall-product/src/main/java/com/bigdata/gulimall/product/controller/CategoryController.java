@@ -43,7 +43,7 @@ public class CategoryController {
         List<CategoryEntity> level1Menus = categoryEntities.stream()
                 .filter(item -> item.getParentCid() == 0)
                 .map(menu->{
-                    menu.setChildCategoryEntity(getChildrens(menu,categoryEntities));
+                    menu.setChildren(getChildrens(menu,categoryEntities));
                     return menu;
                 })
                 .sorted((menu1, menu2) -> {
@@ -63,7 +63,7 @@ public class CategoryController {
         List<CategoryEntity> childrens = all.stream().filter(item -> {
             return item.getParentCid() == root.getCatId();
         }).map(item -> {
-            item.setChildCategoryEntity(getChildrens(item, all));
+            item.setChildren(getChildrens(item, all));
             return item;
         }).sorted((menu1, menu2) -> {
             return (menu1.getSort() ==null ? 0:menu1.getSort())- (menu2.getSort()==null?0:menu2.getSort());
