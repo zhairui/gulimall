@@ -91,6 +91,17 @@ public class CategoryController {
         return R.ok();
     }
 
+
+    /**
+     * 更新拖拽节点后的节点信息（包含节点的顺序和节点层级的更新）
+     */
+    @RequestMapping("/update/sort")
+    public R updateSort(@RequestBody CategoryEntity[] category){
+        categoryService.updateBatchById(Arrays.asList(category));
+
+        return R.ok();
+    }
+
     /**
      * 修改
      */
