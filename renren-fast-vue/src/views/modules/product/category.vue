@@ -2,7 +2,8 @@
 <template>
   <div>
     <el-switch v-model="draggable" active-text="开启拖拽" inactive-text="关闭拖拽"></el-switch>
-    <el-button v-if="draggable"  @click="batchSave">批量保存</el-button>
+    <el-button v-if="draggable" type="success" plain size="small" @click="batchSave">批量保存</el-button>
+    <el-button type="danger" plain size="small" @click="batchDelete">批量删除</el-button>
 
     <el-tree
       :data="menus"
@@ -14,6 +15,7 @@
       :draggable="draggable"
       :allow-drop="allowDrop"
       @node-drop="handleDrop"
+      ref="menuTree"
     >
       <span class="custom-tree-node" slot-scope="{ node, data }">
         <span>{{ node.label }}</span>
@@ -112,6 +114,44 @@ export default {
   watch: {},
   // 方法集合
   methods: {
+    //批量删除
+    batchDelete() {
+      let checkNodes = this.$refs.menuTree.getCheckedNodes();
+
+      //  console.log("被选中的节点：",checkNodes);
+
+      let catIds = [];
+      for (let i = 0; i < checkNodes.length; i++) {
+        catIds.push(checkNodes[i].catId);
+      }
+
+      this.$confirm(`确定要删除?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(() => {
+          this.$http({
+            url: this.$http.adornUrl("/product/category/delete"),
+            method: "post",
+            data: this.$http.adornData(catIds, false)
+          }).then(({ data }) => {
+            this.$message({
+              message: "菜单批量删除成功",
+              type: "success"
+            });
+
+            //重新刷新页面
+            this.getMeus();
+          });
+
+
+        })
+        .catch(() => {
+          //取消删除
+        });
+    },
+
     //批量保存
     batchSave() {
       this.$http({
@@ -134,7 +174,6 @@ export default {
         //恢复默认值
         this.updateNodes = [];
         this.maxLevel = 0;
-        
       });
     },
 
@@ -142,20 +181,19 @@ export default {
     handleDrop(draggingNode, dropNode, dropType, ev) {
       console.log("tree drop: ", draggingNode, dropNode, dropType);
 
-       
       let siblings = null;
       let pCid = 0;
       //根据拖拽类型，获取当前节点的父节点的id
       if (dropType == "before" || dropType == "after") {
-         pCid = dropNode.data.parentCid;
+        pCid = dropNode.data.parentCid;
 
         siblings = dropNode.parent.childNodes;
       } else {
-          pCid = dropNode.data.catId;
+        pCid = dropNode.data.catId;
         siblings = dropNode.childNodes;
       }
 
-        this.pCid.push(pCid);
+      this.pCid.push(pCid);
 
       console.log("siblings:", siblings);
       //重新排序拖拽后的数据
