@@ -93,11 +93,12 @@ export default {
         sort: [
           {
             validator: (rule, value, callback) => {
+              console.log("value",value);
 
-              if (!value) {
+              if (value === "" ) {
                    callback(new Error('排序不能为空'));
               } else if(!Number.isInteger(value) || value < 0) {
-                   callback(new Error("排序必须大于或等于零的整数"));
+                   callback(new Error("排序必须是大于或等于零的整数"));
               }else{
                    callback();
               }
