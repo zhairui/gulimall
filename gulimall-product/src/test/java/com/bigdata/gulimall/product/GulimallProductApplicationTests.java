@@ -1,6 +1,5 @@
 package com.bigdata.gulimall.product;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.bigdata.gulimall.product.entity.BrandEntity;
 import com.bigdata.gulimall.product.service.BrandService;
@@ -8,20 +7,26 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.FileNotFoundException;
 import java.util.List;
+
 
 @SpringBootTest
 class GulimallProductApplicationTests {
 
     @Autowired
     BrandService brandService;
+
+
+
     @Test
     void contextLoads() {
         BrandEntity brandEntity = new BrandEntity();
-         brandEntity.setName("huawei");
-         brandService.save(brandEntity);
+        brandEntity.setName("huawei");
+        brandService.save(brandEntity);
         System.out.println("success.");
     }
+
     @Test
     void updateValue() {
         BrandEntity brandEntity = new BrandEntity();
@@ -30,9 +35,10 @@ class GulimallProductApplicationTests {
         brandService.updateById(brandEntity);
         System.out.println("success.");
     }
+
     @Test
-    void listBrand(){
+    void listBrand() {
         List<BrandEntity> list = brandService.list(new QueryWrapper<BrandEntity>(new BrandEntity()));
-        list.forEach(t-> System.out.println(t));
+        list.forEach(t -> System.out.println(t));
     }
 }

@@ -15,6 +15,9 @@ spring:
       discovery:
         server-addr: 192.168.137.14:8848
 
+
+
+
 mybatis-plus:
   global-config:
     db-config:
