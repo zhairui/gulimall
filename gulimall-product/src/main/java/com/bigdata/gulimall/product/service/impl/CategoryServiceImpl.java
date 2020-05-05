@@ -3,6 +3,8 @@ package com.bigdata.gulimall.product.service.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -42,5 +44,22 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
     public   void removeMenuByIds(List<Long> asList) {
         //TODO 检查当前的菜单是否被别的地方所引用
         categoryDao.deleteBatchIds(asList);
+    }
+
+    @Override
+    public Long[] findCatelogPath(Long catelogId) {
+        List<Long> paths=new ArrayList<>();
+        List<Long> parentPaths = findParentPath(catelogId, paths);
+        Collections.reverse(parentPaths);
+        return parentPaths.toArray(new Long[parentPaths.size()]);
+    }
+
+    public List<Long> findParentPath(Long catelogId, List<Long> paths){
+        paths.add(catelogId);
+        CategoryEntity id = this.getById(catelogId);
+        if(id.getParentCid() != 0){
+             findParentPath(id.getParentCid(),paths);
+        }
+        return paths;
     }
 }
