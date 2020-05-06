@@ -10,7 +10,7 @@
       :rules="dataRule"
       ref="dataForm"
       @keyup.enter.native="dataFormSubmit()"
-      label-width="80px"
+      label-width="120px"
     >
       <el-form-item label="组名" prop="attrGroupName">
         <el-input v-model="dataForm.attrGroupName" placeholder="组名"></el-input>
@@ -24,9 +24,11 @@
       <el-form-item label="组图标" prop="icon">
         <el-input v-model="dataForm.icon" placeholder="组图标"></el-input>
       </el-form-item>
-      <el-form-item label="所属分类id" prop="catelogId"   label-width="105px">
-        <el-cascader v-model="dataForm.catelogPath" :options="categorys"  :props="props"  filterable  placeholder="试试搜索：指南"></el-cascader>
-        <!-- <el-input v-model="dataForm.catelogId" placeholder="所属分类id"></el-input> -->
+      <el-form-item label="所属分类" prop="catelogId">
+        <!-- <el-input v-model="dataForm.catelogId" placeholder="所属分类id"></el-input> @change="handleChange" -->
+        <!-- <el-cascader filterable placeholder="试试搜索：手机" v-model="catelogPath" :options="categorys"  :props="props"></el-cascader> -->
+        <!-- :catelogPath="catelogPath"自定义绑定的属性，可以给子组件传值 -->
+        <category-cascader :catelogPath.sync="catelogPath"></category-cascader>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -37,23 +39,24 @@
 </template>
 
 <script>
+import CategoryCascader from '../common/category-cascader'
 export default {
   data() {
     return {
-      props: {
-        value: "catId",
-        label: "name",
-        children: "children"
+      props:{
+        value:"catId",
+        label:"name",
+        children:"children"
       },
-      categorys: [],
       visible: false,
+      categorys: [],
+      catelogPath: [],
       dataForm: {
         attrGroupId: 0,
         attrGroupName: "",
         sort: "",
         descript: "",
         icon: "",
-        catelogPath: [],
         catelogId: 0
       },
       dataRule: {
@@ -71,17 +74,18 @@ export default {
       }
     };
   },
+  components:{CategoryCascader},
+  
   methods: {
     dialogClose(){
-      this.dataForm.catelogPath = [];
+      this.catelogPath = [];
     },
-    getCategorys() {
+    getCategorys(){
       this.$http({
         url: this.$http.adornUrl("/product/category/list/tree"),
         method: "get"
       }).then(({ data }) => {
-        console.log("data", data);
-        this.categorys = data;
+        this.categorys = data.data;
       });
     },
     init(id) {
@@ -104,7 +108,7 @@ export default {
               this.dataForm.icon = data.attrGroup.icon;
               this.dataForm.catelogId = data.attrGroup.catelogId;
               //查出catelogId的完整路径
-              this.dataForm.catelogPath=data.attrGroup.catelogPath;
+              this.catelogPath =  data.attrGroup.catelogPath;
             }
           });
         }
@@ -127,7 +131,7 @@ export default {
               sort: this.dataForm.sort,
               descript: this.dataForm.descript,
               icon: this.dataForm.icon,
-              catelogId: this.dataForm.catelogPath[this.dataForm.catelogPath.length - 1]
+              catelogId: this.catelogPath[this.catelogPath.length-1]
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {
@@ -146,11 +150,10 @@ export default {
           });
         }
       });
-    },
-    
-  },
-  created() {
-      this.getCategorys();
     }
+  },
+  created(){
+    this.getCategorys();
+  }
 };
 </script>

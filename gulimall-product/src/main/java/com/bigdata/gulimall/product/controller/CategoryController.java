@@ -37,7 +37,7 @@ public class CategoryController {
      * 列表
      */
     @RequestMapping("/list/tree")
-    public List<CategoryEntity> list(){
+    public R list(){
         List<CategoryEntity> categoryEntities = categoryService.listWithTree();
         //找到所有的一级分类
         List<CategoryEntity> level1Menus = categoryEntities.stream()
@@ -52,7 +52,7 @@ public class CategoryController {
 
                 })
                 .collect(Collectors.toList());
-        return level1Menus;
+        return R.ok().put("data",level1Menus);
     }
 
     public List<CategoryEntity> getChildrens(CategoryEntity root,List<CategoryEntity> all){
@@ -107,8 +107,7 @@ public class CategoryController {
      */
     @RequestMapping("/update")
     public R update(@RequestBody CategoryEntity category){
-		categoryService.updateById(category);
-
+        categoryService.updateCascade(category);
         return R.ok();
     }
 
