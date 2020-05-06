@@ -2,6 +2,7 @@ package com.bigdata.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.bigdata.common.utils.PageUtils;
+import com.bigdata.gulimall.product.vo.AttrResponseVo;
 import com.bigdata.gulimall.product.vo.AttrVo;
 import com.bigdata.gulimall.product.entity.AttrEntity;
 
@@ -21,5 +22,9 @@ public interface AttrService extends IService<AttrEntity> {
     void saveAttr(AttrVo attr);
 
     PageUtils queryBaseAttrPage(Map<String, Object> params, Long cateLogId);
+
+    AttrResponseVo getAttrInfo(Long attrId);
+
+    void updateAttr(AttrVo attr);
 }
 

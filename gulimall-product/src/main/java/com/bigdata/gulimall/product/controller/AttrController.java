@@ -2,9 +2,9 @@ package com.bigdata.gulimall.product.controller;
 
 import com.bigdata.common.utils.PageUtils;
 import com.bigdata.common.utils.R;
-import com.bigdata.gulimall.product.vo.AttrVo;
-import com.bigdata.gulimall.product.entity.AttrEntity;
 import com.bigdata.gulimall.product.service.AttrService;
+import com.bigdata.gulimall.product.vo.AttrResponseVo;
+import com.bigdata.gulimall.product.vo.AttrVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,12 +53,14 @@ public class AttrController {
 
     /**
      * 信息
+     * 功能：查询属性详情
+     * API：https://easydoc.xyz/doc/75716633/ZUqEdvA4/7C3tMIuF
      */
     @RequestMapping("/info/{attrId}")
     public R info(@PathVariable("attrId") Long attrId){
-		AttrEntity attr = attrService.getById(attrId);
+        AttrResponseVo responseVo=attrService.getAttrInfo(attrId);
 
-        return R.ok().put("attr", attr);
+        return R.ok().put("attr", responseVo);
     }
 
     /**
@@ -75,8 +77,8 @@ public class AttrController {
      * 修改
      */
     @RequestMapping("/update")
-    public R update(@RequestBody AttrEntity attr){
-		attrService.updateById(attr);
+    public R update(@RequestBody AttrVo attr){
+		attrService.updateAttr(attr);
 
         return R.ok();
     }
