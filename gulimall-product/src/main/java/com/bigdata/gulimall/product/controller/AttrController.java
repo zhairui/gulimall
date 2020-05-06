@@ -2,7 +2,7 @@ package com.bigdata.gulimall.product.controller;
 
 import com.bigdata.common.utils.PageUtils;
 import com.bigdata.common.utils.R;
-import com.bigdata.gulimall.product.AttrVo;
+import com.bigdata.gulimall.product.vo.AttrVo;
 import com.bigdata.gulimall.product.entity.AttrEntity;
 import com.bigdata.gulimall.product.service.AttrService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +25,20 @@ import java.util.Map;
 public class AttrController {
     @Autowired
     private AttrService attrService;
+
+    /**
+     * 获取分类规格参数
+     * API:/product/attr/base/list/{catelogId}
+     * @param params
+     * @param cateLogId
+     * @return
+     */
+    @RequestMapping("/base/list/{catelogId}")
+    public R baseAttrList(@RequestParam Map<String,Object> params,@PathVariable("catelogId") Long cateLogId){
+        PageUtils page = attrService.queryBaseAttrPage(params,cateLogId);
+         return R.ok().put("page",page);
+    }
+
 
     /**
      * 列表

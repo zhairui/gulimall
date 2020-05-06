@@ -1,4 +1,4 @@
-package com.bigdata.gulimall.product;
+package com.bigdata.gulimall.product.vo;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
