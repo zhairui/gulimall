@@ -2,6 +2,7 @@ package com.bigdata.gulimall.product.controller;
 
 import com.bigdata.common.utils.PageUtils;
 import com.bigdata.common.utils.R;
+import com.bigdata.gulimall.product.AttrVo;
 import com.bigdata.gulimall.product.entity.AttrEntity;
 import com.bigdata.gulimall.product.service.AttrService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +51,8 @@ public class AttrController {
      * 保存
      */
     @RequestMapping("/save")
-    public R save(@RequestBody AttrEntity attr){
-		attrService.save(attr);
+    public R save(@RequestBody AttrVo attr){
+		attrService.saveAttr(attr);
 
         return R.ok();
     }
