@@ -2,13 +2,17 @@ package com.bigdata.gulimall.product.controller;
 
 import com.bigdata.common.utils.PageUtils;
 import com.bigdata.common.utils.R;
+import com.bigdata.gulimall.product.entity.AttrEntity;
 import com.bigdata.gulimall.product.entity.AttrGroupEntity;
 import com.bigdata.gulimall.product.service.AttrGroupService;
+import com.bigdata.gulimall.product.service.AttrService;
 import com.bigdata.gulimall.product.service.CategoryService;
+import com.bigdata.gulimall.product.vo.AttrGroupRelationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 
@@ -28,6 +32,36 @@ public class AttrGroupController {
 
     @Autowired
     CategoryService categoryService;
+
+    @Autowired
+    AttrService attrService;
+
+    /**
+     * 删除属性与分组的关联关系
+     * API: https://easydoc.xyz/doc/75716633/ZUqEdvA4/qn7A2Fht
+     * @param attrGroupRelationVos
+     * @return
+     */
+    ///product/attrgroup/attr/relation/delete
+    @PostMapping("/attr/relation/delete")
+    public R delAttrRelation(@RequestBody AttrGroupRelationVo[] attrGroupRelationVos){
+        attrService.deleteRelation(attrGroupRelationVos);
+
+         return R.ok();
+    }
+
+    /**
+     * 获取属性分组的关联的所有属性
+     * API:https://easydoc.xyz/doc/75716633/ZUqEdvA4/LnjzZHPj
+     * //product/attrgroup/{attrgroupId}/attr/relation
+     * @param attrgroupId 分组ID
+     * @return
+     */
+    @GetMapping("{attrgroupId}/attr/relation")
+    public R attrRelation(@PathVariable("attrgroupId") Long attrgroupId){
+         List<AttrEntity> entityList = attrService.getRelationAtr(attrgroupId);
+         return R.ok().put("data",entityList);
+    }
 
     /**
      * 列表

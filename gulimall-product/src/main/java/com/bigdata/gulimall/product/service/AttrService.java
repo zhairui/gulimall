@@ -2,10 +2,12 @@ package com.bigdata.gulimall.product.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.bigdata.common.utils.PageUtils;
+import com.bigdata.gulimall.product.vo.AttrGroupRelationVo;
 import com.bigdata.gulimall.product.vo.AttrResponseVo;
 import com.bigdata.gulimall.product.vo.AttrVo;
 import com.bigdata.gulimall.product.entity.AttrEntity;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -26,5 +28,9 @@ public interface AttrService extends IService<AttrEntity> {
     AttrResponseVo getAttrInfo(Long attrId);
 
     void updateAttr(AttrVo attr);
+
+    List<AttrEntity> getRelationAtr(Long attrgroupId);
+
+    void deleteRelation(AttrGroupRelationVo[] attrGroupRelationVos);
 }
 
