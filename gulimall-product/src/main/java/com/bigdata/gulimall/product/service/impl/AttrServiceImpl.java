@@ -109,7 +109,9 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
                 if (null != relationEntity) {
                     AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(relationEntity.getAttrGroupId());
-                    attrResponseVo.setGroupName(attrGroupEntity.getAttrGroupName());
+                    if(null != attrGroupEntity){
+                        attrResponseVo.setGroupName(attrGroupEntity.getAttrGroupName());
+                    }
                 }
             }
 
@@ -213,5 +215,58 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
 
 
         relationDao.deleteBatchRelation(entityList);
+    }
+
+    /**获取属性分组中，没有关联被其他属性分组和自身所关联的其他属性
+     * 总的思想是：
+     * （1）根据属性分组id获取到对应的分类ID
+     * （2）在pms_attr_group表中，找到所有具有相同分类ID的所有记录，并获取到它们的属性分组id
+     * （3）根据这些属性分组ID，到pms_attr_attrgroup_relation中间表中查询出所关联的所有属性id
+     * （4）拿到这些属性id，根据分类ID和属性类型（基本/销售），在pms_attr中查询所有不在这些属性id范围内的其他属性记录
+     * （5）将结果封装到pageUtil中并返回
+     *
+     * @param attrgroupId
+     * @param params
+     * @return
+     */
+    @Override
+    public PageUtils getNoRelationAttr(Long attrgroupId, Map<String, Object> params) {
+
+        //1. 当前分组只能关联自己所属的分类的所有属性
+        AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(attrgroupId);
+        Long catelogId = attrGroupEntity.getCatelogId();
+        //2. 当前分组只能关联别的分组没有引用的属性
+        //2.1)、当前分类下的其他属性分组
+        List<AttrGroupEntity> groupEntities = attrGroupDao.selectList(new QueryWrapper<AttrGroupEntity>()
+                .eq("catelog_id", catelogId));
+//                .ne("attr_group_id", attrgroupId));
+        List<Long> collect = groupEntities.stream().map(item -> {
+            return item.getAttrGroupId();
+        }).collect(Collectors.toList());
+        //2.2)、这些分组关联的属性
+        List<AttrAttrgroupRelationEntity> entities = relationDao.selectList(new QueryWrapper<AttrAttrgroupRelationEntity>().in("attr_group_id",collect));
+        List<Long> attrIds = entities.stream().map(item -> {
+            return item.getAttrId();
+        }).collect(Collectors.toList());
+        //2.3)、从当前分类的所有属性中移除这些属性
+        QueryWrapper<AttrEntity> queryWrapper = new QueryWrapper<AttrEntity>().eq("catelog_id", catelogId).eq("attr_type",ProductConstant.ATTR_TYPE_SALE.getCode());
+
+        if(null != attrIds && attrIds.size() > 0){
+            queryWrapper.notIn("attr_id", attrIds);
+        }
+
+        String key = (String)params.get("key");
+        if(StringUtils.isNotEmpty(key)){
+            queryWrapper.and(w ->{
+                w.eq("attr_id",key).or().like("attr_name",key);
+            });
+        }
+
+        IPage<AttrEntity> page = this.page(new Query<AttrEntity>().getPage(params), queryWrapper);
+
+        PageUtils pageUtils = new PageUtils(page);
+
+
+        return pageUtils;
     }
 }

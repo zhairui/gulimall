@@ -36,6 +36,24 @@ public class AttrGroupController {
     @Autowired
     AttrService attrService;
 
+
+    /**
+     * 获取属性分组中，没有关联被其他属性分组和自身所关联的其他属性
+     * API:https://easydoc.xyz/doc/75716633/ZUqEdvA4/d3EezLdO
+     * /product/attrgroup/{attrgroupId}/noattr/relation
+     * @param attrgroupId
+     * @param params
+     * @return
+     */
+    @GetMapping("/{attrgroupId}/noattr/relation")
+    public R attrNoRelation(@PathVariable("attrgroupId") Long attrgroupId,@RequestParam Map<String, Object> params){
+        PageUtils page = attrService.getNoRelationAttr(attrgroupId,params);
+
+        return R.ok().put("page",page);
+    }
+
+
+
     /**
      * 删除属性与分组的关联关系
      * API: https://easydoc.xyz/doc/75716633/ZUqEdvA4/qn7A2Fht
@@ -59,8 +77,8 @@ public class AttrGroupController {
      */
     @GetMapping("{attrgroupId}/attr/relation")
     public R attrRelation(@PathVariable("attrgroupId") Long attrgroupId){
-         List<AttrEntity> entityList = attrService.getRelationAtr(attrgroupId);
-         return R.ok().put("data",entityList);
+        List<AttrEntity> entityList = attrService.getRelationAtr(attrgroupId);
+        return R.ok().put("data",entityList);
     }
 
     /**
