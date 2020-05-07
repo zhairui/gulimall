@@ -1,13 +1,13 @@
 <template>
-  <div class="mod-role">
+  <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.roleName" placeholder="角色名称" clearable></el-input>
+        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询111</el-button>
-        <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button @click="getDataList()">查询</el-button>
+        <el-button v-if="isAuth('order:ordersetting:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('order:ordersetting:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -23,30 +23,46 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="roleId"
+        prop="id"
         header-align="center"
         align="center"
-        width="80"
-        label="ID">
+        label="id">
       </el-table-column>
       <el-table-column
-        prop="roleName"
+        prop="flashOrderOvertime"
         header-align="center"
         align="center"
-        label="角色名称">
+        label="秒杀订单超时关闭时间(分)">
       </el-table-column>
       <el-table-column
-        prop="remark"
+        prop="normalOrderOvertime"
         header-align="center"
         align="center"
-        label="备注">
+        label="正常订单超时时间(分)">
       </el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="confirmOvertime"
         header-align="center"
         align="center"
-        width="180"
-        label="创建时间">
+        label="发货后自动确认收货时间（天）">
+      </el-table-column>
+      <el-table-column
+        prop="finishOvertime"
+        header-align="center"
+        align="center"
+        label="自动完成交易时间，不能申请退货（天）">
+      </el-table-column>
+      <el-table-column
+        prop="commentOvertime"
+        header-align="center"
+        align="center"
+        label="订单完成后自动好评时间（天）">
+      </el-table-column>
+      <el-table-column
+        prop="memberLevel"
+        header-align="center"
+        align="center"
+        label="会员等级【0-不限会员等级，全部通用；其他-对应的其他会员等级】">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -55,8 +71,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.roleId)">修改</el-button>
-          <el-button v-if="isAuth('sys:role:delete')" type="text" size="small" @click="deleteHandle(scope.row.roleId)">删除</el-button>
+          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -75,12 +91,12 @@
 </template>
 
 <script>
-  import AddOrUpdate from './role-add-or-update'
+  import AddOrUpdate from './ordersetting-add-or-update'
   export default {
     data () {
       return {
         dataForm: {
-          roleName: ''
+          key: ''
         },
         dataList: [],
         pageIndex: 1,
@@ -102,12 +118,12 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/sys/role/list'),
+          url: this.$http.adornUrl('/order/ordersetting/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'roleName': this.dataForm.roleName
+            'key': this.dataForm.key
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -145,7 +161,7 @@
       // 删除
       deleteHandle (id) {
         var ids = id ? [id] : this.dataListSelections.map(item => {
-          return item.roleId
+          return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
           confirmButtonText: '确定',
@@ -153,7 +169,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/sys/role/delete'),
+            url: this.$http.adornUrl('/order/ordersetting/delete'),
             method: 'post',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {
@@ -170,7 +186,7 @@
               this.$message.error(data.msg)
             }
           })
-        }).catch(() => {})
+        })
       }
     }
   }

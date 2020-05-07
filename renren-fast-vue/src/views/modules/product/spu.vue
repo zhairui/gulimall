@@ -37,6 +37,7 @@
 import CategoryCascader from "../common/category-cascader";
 import BrandSelect from "../common/brand-select";
 import Spuinfo from "./spuinfo";
+import PubSub from 'pubsub-js'
 export default {
   //import引入的组件需要注入到对象中才能使用
   components: { CategoryCascader, Spuinfo, BrandSelect },
@@ -65,7 +66,7 @@ export default {
   methods: {
     searchSpuInfo() {
       console.log("搜索条件", this.dataForm);
-      this.PubSub.publish("dataForm",this.dataForm);
+      PubSub.publish("dataForm",this.dataForm);
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
@@ -84,8 +85,8 @@ export default {
   beforeUpdate() {}, //生命周期 - 更新之前
   updated() {}, //生命周期 - 更新之后
   beforeDestroy() {
-     PubSub.unsubscribe(this.catPathSub); 
-     PubSub.unsubscribe(this.brandIdSub); 
+     PubSub.unsubscribe(this.catPathSub);
+     PubSub.unsubscribe(this.brandIdSub);
   }, //生命周期 - 销毁之前
   destroyed() {}, //生命周期 - 销毁完成
   activated() {} //如果页面有keep-alive缓存功能，这个函数会触发

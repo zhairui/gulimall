@@ -137,17 +137,11 @@ export default {
   methods: {
     addCatelogSelect() {
       //{"brandId":1,"catelogId":2}
-      this.popCatelogSelectVisible = false;
+      this.popCatelogSelectVisible =false;
       this.$http({
         url: this.$http.adornUrl("/product/categorybrandrelation/save"),
         method: "post",
-        data: this.$http.adornData(
-          {
-            brandId: this.brandId,
-            catelogId: this.catelogPath[this.catelogPath.length - 1]
-          },
-          false
-        )
+        data: this.$http.adornData({brandId:this.brandId,catelogId:this.catelogPath[this.catelogPath.length-1]}, false)
       }).then(({ data }) => {
         this.getCateRelation();
       });

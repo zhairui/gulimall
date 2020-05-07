@@ -4,15 +4,18 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-      <el-form-item label="参数名" prop="paramKey">
-        <el-input v-model="dataForm.paramKey" placeholder="参数名"></el-input>
-      </el-form-item>
-      <el-form-item label="参数值" prop="paramValue">
-        <el-input v-model="dataForm.paramValue" placeholder="参数值"></el-input>
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
-      </el-form-item>
+    <el-form-item label="sku_id" prop="skuId">
+      <el-input v-model="dataForm.skuId" placeholder="sku_id"></el-input>
+    </el-form-item>
+    <el-form-item label="sku_name" prop="skuName">
+      <el-input v-model="dataForm.skuName" placeholder="sku_name"></el-input>
+    </el-form-item>
+    <el-form-item label="购买个数" prop="skuNum">
+      <el-input v-model="dataForm.skuNum" placeholder="购买个数"></el-input>
+    </el-form-item>
+    <el-form-item label="工作单id" prop="taskId">
+      <el-input v-model="dataForm.taskId" placeholder="工作单id"></el-input>
+    </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -28,16 +31,23 @@
         visible: false,
         dataForm: {
           id: 0,
-          paramKey: '',
-          paramValue: '',
-          remark: ''
+          skuId: '',
+          skuName: '',
+          skuNum: '',
+          taskId: ''
         },
         dataRule: {
-          paramKey: [
-            { required: true, message: '参数名不能为空', trigger: 'blur' }
+          skuId: [
+            { required: true, message: 'sku_id不能为空', trigger: 'blur' }
           ],
-          paramValue: [
-            { required: true, message: '参数值不能为空', trigger: 'blur' }
+          skuName: [
+            { required: true, message: 'sku_name不能为空', trigger: 'blur' }
+          ],
+          skuNum: [
+            { required: true, message: '购买个数不能为空', trigger: 'blur' }
+          ],
+          taskId: [
+            { required: true, message: '工作单id不能为空', trigger: 'blur' }
           ]
         }
       }
@@ -50,14 +60,15 @@
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/config/info/${this.dataForm.id}`),
+              url: this.$http.adornUrl(`/ware/wareordertaskdetail/info/${this.dataForm.id}`),
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.paramKey = data.config.paramKey
-                this.dataForm.paramValue = data.config.paramValue
-                this.dataForm.remark = data.config.remark
+                this.dataForm.skuId = data.wareOrderTaskDetail.skuId
+                this.dataForm.skuName = data.wareOrderTaskDetail.skuName
+                this.dataForm.skuNum = data.wareOrderTaskDetail.skuNum
+                this.dataForm.taskId = data.wareOrderTaskDetail.taskId
               }
             })
           }
@@ -68,13 +79,14 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/config/${!this.dataForm.id ? 'save' : 'update'}`),
+              url: this.$http.adornUrl(`/ware/wareordertaskdetail/${!this.dataForm.id ? 'save' : 'update'}`),
               method: 'post',
               data: this.$http.adornData({
                 'id': this.dataForm.id || undefined,
-                'paramKey': this.dataForm.paramKey,
-                'paramValue': this.dataForm.paramValue,
-                'remark': this.dataForm.remark
+                'skuId': this.dataForm.skuId,
+                'skuName': this.dataForm.skuName,
+                'skuNum': this.dataForm.skuNum,
+                'taskId': this.dataForm.taskId
               })
             }).then(({data}) => {
               if (data && data.code === 0) {

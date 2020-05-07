@@ -1,13 +1,13 @@
 <template>
-  <div class="mod-role">
+  <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.roleName" placeholder="角色名称" clearable></el-input>
+        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询111</el-button>
-        <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button @click="getDataList()">查询</el-button>
+        <el-button v-if="isAuth('order:orderitem:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('order:orderitem:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -23,30 +23,124 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="roleId"
+        prop="id"
         header-align="center"
         align="center"
-        width="80"
-        label="ID">
+        label="id">
       </el-table-column>
       <el-table-column
-        prop="roleName"
+        prop="orderId"
         header-align="center"
         align="center"
-        label="角色名称">
+        label="order_id">
       </el-table-column>
       <el-table-column
-        prop="remark"
+        prop="orderSn"
         header-align="center"
         align="center"
-        label="备注">
+        label="order_sn">
       </el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="spuId"
         header-align="center"
         align="center"
-        width="180"
-        label="创建时间">
+        label="spu_id">
+      </el-table-column>
+      <el-table-column
+        prop="spuName"
+        header-align="center"
+        align="center"
+        label="spu_name">
+      </el-table-column>
+      <el-table-column
+        prop="spuPic"
+        header-align="center"
+        align="center"
+        label="spu_pic">
+      </el-table-column>
+      <el-table-column
+        prop="spuBrand"
+        header-align="center"
+        align="center"
+        label="品牌">
+      </el-table-column>
+      <el-table-column
+        prop="categoryId"
+        header-align="center"
+        align="center"
+        label="商品分类id">
+      </el-table-column>
+      <el-table-column
+        prop="skuId"
+        header-align="center"
+        align="center"
+        label="商品sku编号">
+      </el-table-column>
+      <el-table-column
+        prop="skuName"
+        header-align="center"
+        align="center"
+        label="商品sku名字">
+      </el-table-column>
+      <el-table-column
+        prop="skuPic"
+        header-align="center"
+        align="center"
+        label="商品sku图片">
+      </el-table-column>
+      <el-table-column
+        prop="skuPrice"
+        header-align="center"
+        align="center"
+        label="商品sku价格">
+      </el-table-column>
+      <el-table-column
+        prop="skuQuantity"
+        header-align="center"
+        align="center"
+        label="商品购买的数量">
+      </el-table-column>
+      <el-table-column
+        prop="skuAttrsVals"
+        header-align="center"
+        align="center"
+        label="商品销售属性组合（JSON）">
+      </el-table-column>
+      <el-table-column
+        prop="promotionAmount"
+        header-align="center"
+        align="center"
+        label="商品促销分解金额">
+      </el-table-column>
+      <el-table-column
+        prop="couponAmount"
+        header-align="center"
+        align="center"
+        label="优惠券优惠分解金额">
+      </el-table-column>
+      <el-table-column
+        prop="integrationAmount"
+        header-align="center"
+        align="center"
+        label="积分优惠分解金额">
+      </el-table-column>
+      <el-table-column
+        prop="realAmount"
+        header-align="center"
+        align="center"
+        label="该商品经过优惠后的分解金额">
+      </el-table-column>
+      <el-table-column
+        prop="giftIntegration"
+        header-align="center"
+        align="center"
+        label="赠送积分">
+      </el-table-column>
+      <el-table-column
+        prop="giftGrowth"
+        header-align="center"
+        align="center"
+        label="赠送成长值">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -55,8 +149,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.roleId)">修改</el-button>
-          <el-button v-if="isAuth('sys:role:delete')" type="text" size="small" @click="deleteHandle(scope.row.roleId)">删除</el-button>
+          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -75,12 +169,12 @@
 </template>
 
 <script>
-  import AddOrUpdate from './role-add-or-update'
+  import AddOrUpdate from './orderitem-add-or-update'
   export default {
     data () {
       return {
         dataForm: {
-          roleName: ''
+          key: ''
         },
         dataList: [],
         pageIndex: 1,
@@ -102,12 +196,12 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/sys/role/list'),
+          url: this.$http.adornUrl('/order/orderitem/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'roleName': this.dataForm.roleName
+            'key': this.dataForm.key
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -145,7 +239,7 @@
       // 删除
       deleteHandle (id) {
         var ids = id ? [id] : this.dataListSelections.map(item => {
-          return item.roleId
+          return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
           confirmButtonText: '确定',
@@ -153,7 +247,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/sys/role/delete'),
+            url: this.$http.adornUrl('/order/orderitem/delete'),
             method: 'post',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {
@@ -170,7 +264,7 @@
               this.$message.error(data.msg)
             }
           })
-        }).catch(() => {})
+        })
       }
     }
   }

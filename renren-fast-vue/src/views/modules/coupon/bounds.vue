@@ -1,13 +1,13 @@
 <template>
-  <div class="mod-role">
+  <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.roleName" placeholder="角色名称" clearable></el-input>
+        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button @click="getDataList()">查询111</el-button>
-        <el-button v-if="isAuth('sys:role:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('sys:role:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button @click="getDataList()">查询</el-button>
+        <el-button v-if="isAuth('coupon:spubounds:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
+        <el-button v-if="isAuth('coupon:spubounds:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -23,30 +23,35 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="roleId"
+        prop="id"
         header-align="center"
         align="center"
-        width="80"
-        label="ID">
+        label="id">
       </el-table-column>
       <el-table-column
-        prop="roleName"
+        prop="spuId"
         header-align="center"
         align="center"
-        label="角色名称">
+        label="">
       </el-table-column>
       <el-table-column
-        prop="remark"
+        prop="growBounds"
         header-align="center"
         align="center"
-        label="备注">
+        label="成长积分">
       </el-table-column>
       <el-table-column
-        prop="createTime"
+        prop="buyBounds"
         header-align="center"
         align="center"
-        width="180"
-        label="创建时间">
+        label="购物积分">
+      </el-table-column>
+      <el-table-column
+        prop="work"
+        header-align="center"
+        align="center"
+        label="优惠生效情况">
+        <!-- [1111（四个状态位，从右到左）;0 - 无优惠，成长积分是否赠送;1 - 无优惠，购物积分是否赠送;2 - 有优惠，成长积分是否赠送;3 - 有优惠，购物积分是否赠送【状态位0：不赠送，1：赠送】] -->
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -55,8 +60,8 @@
         width="150"
         label="操作">
         <template slot-scope="scope">
-          <el-button v-if="isAuth('sys:role:update')" type="text" size="small" @click="addOrUpdateHandle(scope.row.roleId)">修改</el-button>
-          <el-button v-if="isAuth('sys:role:delete')" type="text" size="small" @click="deleteHandle(scope.row.roleId)">删除</el-button>
+          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -75,12 +80,12 @@
 </template>
 
 <script>
-  import AddOrUpdate from './role-add-or-update'
+  import AddOrUpdate from './spubounds-add-or-update'
   export default {
     data () {
       return {
         dataForm: {
-          roleName: ''
+          key: ''
         },
         dataList: [],
         pageIndex: 1,
@@ -102,12 +107,12 @@
       getDataList () {
         this.dataListLoading = true
         this.$http({
-          url: this.$http.adornUrl('/sys/role/list'),
+          url: this.$http.adornUrl('/coupon/spubounds/list'),
           method: 'get',
           params: this.$http.adornParams({
             'page': this.pageIndex,
             'limit': this.pageSize,
-            'roleName': this.dataForm.roleName
+            'key': this.dataForm.key
           })
         }).then(({data}) => {
           if (data && data.code === 0) {
@@ -145,7 +150,7 @@
       // 删除
       deleteHandle (id) {
         var ids = id ? [id] : this.dataListSelections.map(item => {
-          return item.roleId
+          return item.id
         })
         this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
           confirmButtonText: '确定',
@@ -153,7 +158,7 @@
           type: 'warning'
         }).then(() => {
           this.$http({
-            url: this.$http.adornUrl('/sys/role/delete'),
+            url: this.$http.adornUrl('/coupon/spubounds/delete'),
             method: 'post',
             data: this.$http.adornData(ids, false)
           }).then(({data}) => {
@@ -170,7 +175,7 @@
               this.$message.error(data.msg)
             }
           })
-        }).catch(() => {})
+        })
       }
     }
   }

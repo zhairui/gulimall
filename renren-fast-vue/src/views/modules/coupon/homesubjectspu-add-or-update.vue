@@ -4,15 +4,18 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="120px">
-      <el-form-item label="参数名" prop="paramKey">
-        <el-input v-model="dataForm.paramKey" placeholder="参数名"></el-input>
-      </el-form-item>
-      <el-form-item label="参数值" prop="paramValue">
-        <el-input v-model="dataForm.paramValue" placeholder="参数值"></el-input>
-      </el-form-item>
-      <el-form-item label="备注" prop="remark">
-        <el-input v-model="dataForm.remark" placeholder="备注"></el-input>
-      </el-form-item>
+    <el-form-item label="专题名字" prop="name">
+      <el-input v-model="dataForm.name" placeholder="专题名字"></el-input>
+    </el-form-item>
+    <el-form-item label="专题id" prop="subjectId">
+      <el-input v-model="dataForm.subjectId" placeholder="专题id"></el-input>
+    </el-form-item>
+    <el-form-item label="spu_id" prop="spuId">
+      <el-input v-model="dataForm.spuId" placeholder="spu_id"></el-input>
+    </el-form-item>
+    <el-form-item label="排序" prop="sort">
+      <el-input v-model="dataForm.sort" placeholder="排序"></el-input>
+    </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -28,16 +31,23 @@
         visible: false,
         dataForm: {
           id: 0,
-          paramKey: '',
-          paramValue: '',
-          remark: ''
+          name: '',
+          subjectId: '',
+          spuId: '',
+          sort: ''
         },
         dataRule: {
-          paramKey: [
-            { required: true, message: '参数名不能为空', trigger: 'blur' }
+          name: [
+            { required: true, message: '专题名字不能为空', trigger: 'blur' }
           ],
-          paramValue: [
-            { required: true, message: '参数值不能为空', trigger: 'blur' }
+          subjectId: [
+            { required: true, message: '专题id不能为空', trigger: 'blur' }
+          ],
+          spuId: [
+            { required: true, message: 'spu_id不能为空', trigger: 'blur' }
+          ],
+          sort: [
+            { required: true, message: '排序不能为空', trigger: 'blur' }
           ]
         }
       }
@@ -50,14 +60,15 @@
           this.$refs['dataForm'].resetFields()
           if (this.dataForm.id) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/config/info/${this.dataForm.id}`),
+              url: this.$http.adornUrl(`/coupon/homesubjectspu/info/${this.dataForm.id}`),
               method: 'get',
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.paramKey = data.config.paramKey
-                this.dataForm.paramValue = data.config.paramValue
-                this.dataForm.remark = data.config.remark
+                this.dataForm.name = data.homeSubjectSpu.name
+                this.dataForm.subjectId = data.homeSubjectSpu.subjectId
+                this.dataForm.spuId = data.homeSubjectSpu.spuId
+                this.dataForm.sort = data.homeSubjectSpu.sort
               }
             })
           }
@@ -68,13 +79,14 @@
         this.$refs['dataForm'].validate((valid) => {
           if (valid) {
             this.$http({
-              url: this.$http.adornUrl(`/sys/config/${!this.dataForm.id ? 'save' : 'update'}`),
+              url: this.$http.adornUrl(`/coupon/homesubjectspu/${!this.dataForm.id ? 'save' : 'update'}`),
               method: 'post',
               data: this.$http.adornData({
                 'id': this.dataForm.id || undefined,
-                'paramKey': this.dataForm.paramKey,
-                'paramValue': this.dataForm.paramValue,
-                'remark': this.dataForm.remark
+                'name': this.dataForm.name,
+                'subjectId': this.dataForm.subjectId,
+                'spuId': this.dataForm.spuId,
+                'sort': this.dataForm.sort
               })
             }).then(({data}) => {
               if (data && data.code === 0) {
