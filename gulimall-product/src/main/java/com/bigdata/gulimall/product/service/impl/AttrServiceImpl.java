@@ -64,7 +64,7 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
         //保存基本数据
         this.save(attrEntity);
 
-        if(ProductConstant.ATTR_TYPE_SALE.getCode() == attrEntity.getAttrType()){
+        if(ProductConstant.ATTR_TYPE_SALE.getCode() == attrEntity.getAttrType() && attr.getAttrGroupId() != null ){
             //保存关联关系
             AttrAttrgroupRelationEntity relationEntity = new AttrAttrgroupRelationEntity();
             relationEntity.setAttrId(attrEntity.getAttrId());
@@ -102,19 +102,16 @@ public class AttrServiceImpl extends ServiceImpl<AttrDao, AttrEntity> implements
             AttrResponseVo attrResponseVo = new AttrResponseVo();
             BeanUtils.copyProperties(attrEntity, attrResponseVo);
 
-            if("base".equals(attrType)){
+            if("base".equalsIgnoreCase(attrType)){
                 //这里之所以没有使用多表关联查询，是因为在大数据量的情况下，产生的笛卡尔积很庞大
                 //所以暂时只能通过多次查询的方式来获取到结果
                 AttrAttrgroupRelationEntity relationEntity = relationDao.selectOne(new QueryWrapper<AttrAttrgroupRelationEntity>().eq("attr_id", attrResponseVo.getAttrId()));
 
-                if (null != relationEntity) {
+                if (null != relationEntity && relationEntity.getAttrGroupId() != null) {
                     AttrGroupEntity attrGroupEntity = attrGroupDao.selectById(relationEntity.getAttrGroupId());
-                    if(null != attrGroupEntity){
-                        attrResponseVo.setGroupName(attrGroupEntity.getAttrGroupName());
-                    }
+                    attrResponseVo.setGroupName(attrGroupEntity.getAttrGroupName());
                 }
             }
-
 
             CategoryEntity categoryEntity = categoryDao.selectById(attrResponseVo.getCatelogId());
             if (categoryEntity != null) {

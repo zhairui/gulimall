@@ -4,6 +4,7 @@ import com.bigdata.common.utils.PageUtils;
 import com.bigdata.common.utils.R;
 import com.bigdata.gulimall.product.entity.AttrEntity;
 import com.bigdata.gulimall.product.entity.AttrGroupEntity;
+import com.bigdata.gulimall.product.service.AttrAttrgroupRelationService;
 import com.bigdata.gulimall.product.service.AttrGroupService;
 import com.bigdata.gulimall.product.service.AttrService;
 import com.bigdata.gulimall.product.service.CategoryService;
@@ -36,6 +37,22 @@ public class AttrGroupController {
     @Autowired
     AttrService attrService;
 
+    @Autowired
+    AttrAttrgroupRelationService relationService;
+
+    /**功能：添加属性和属性分组的关联关系
+     * API：<https://easydoc.xyz/doc/75716633/ZUqEdvA4/VhgnaedC
+     * @param relationVo
+     * @return
+     */
+    @PostMapping("/attr/relation")
+    public R saveAttrRelation(@RequestBody List<AttrGroupRelationVo> relationVo){
+
+        relationService.saveAttrRelations(relationVo);
+
+
+        return  R.ok();
+    }
 
     /**
      * 获取属性分组中，没有关联被其他属性分组和自身所关联的其他属性
