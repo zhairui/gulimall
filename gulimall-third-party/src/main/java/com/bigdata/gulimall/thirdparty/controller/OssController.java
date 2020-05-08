@@ -38,7 +38,7 @@ public class OssController {
         String host = "https://" + bucket + "." + endpoint; // host的格式为 bucketname.endpoint
 
         String format = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
-        String dir = format+"/"; // 用户上传文件时指定的前缀。
+        String dir = format; // 用户上传文件时指定的前缀。
 
 
         Map<String, String> respMap=null;
