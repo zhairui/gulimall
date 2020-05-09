@@ -14,7 +14,8 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.137.14:8848
-
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
 
 
 
