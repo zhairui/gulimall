@@ -2,15 +2,6 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: baidu_route
-          uri: https://www.baidu.com
-          predicates:
-            - Query=url, baidu
-
-        - id: qq_route
-          uri: https://www.qq.com/
-          predicates:
-            - Query=url, qq
 
         - id: product_route
           uri: lb://gulimall-product
@@ -26,12 +17,20 @@ spring:
           filters:
             - RewritePath=/api/thirdparty/(?<segment>/?.*),/$\{segment}
 
-        - id: gulimall-member
+        - id: member_route
           uri: lb://gulimall-member
           predicates:
             - Path=/api/member/**
           filters:
             - RewritePath=/api/(?<segment>/?.*),/$\{segment}
+
+        - id: ware_route
+          uri: lb://gulimall-ware
+          predicates:
+            - Path=/api/ware/**
+          filters:
+            - RewritePath=/api/(?<segment>/?.*),/$\{segment}
+
 
         - id: admin_route
           uri: lb://renren-fast

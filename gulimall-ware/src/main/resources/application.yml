@@ -14,10 +14,15 @@ spring:
     nacos:
       discovery:
         server-addr: 192.168.137.14:8848
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
 
 mybatis-plus:
   global-config:
     db-config:
       id-type: auto
   mapper-locations: classpath:/mapper/**/*.xml
+logging:
+  level:
+    com.bigdata.gulimall.ware: debug
 

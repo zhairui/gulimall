@@ -9,8 +9,8 @@ spring:
       discovery:
         server-addr: 192.168.137.14:8848
     alicloud:
-      access-key: LTAI4G4W1RA4JXz2QhoDwHhi
-      secret-key: R99lmDOJumF2x43ZBKT259Qpe70Oxw
+      access-key: LTAI4G4EPnigbi8r5AHc4uT1
+      secret-key: 8DkC1xo5ThzGgcIfdl1b1W7yCIgNSr
       oss:
         endpoint: oss-cn-shanghai.aliyuncs.com
         bucket: gulimall-images
