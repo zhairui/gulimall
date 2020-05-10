@@ -25,3 +25,9 @@
 | renren-fast          | 8080  |
 | gulimall-order       | 9000  |
 
+## FAQ
+
+### 1、[微服务太多，管理起来不方便](https://shimo.im/docs/WTPpdrDt66HxCQx6/)
+
+### 2、[SPU管理中，修改商品规格，显示400错误状态码](https://shimo.im/docs/wpTxdcHpYRRV3dc6/)
+
