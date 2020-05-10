@@ -4,7 +4,7 @@
 
 **笔      记**：[笔记参考](http://www.jayh.club/#/02.PassJava%E6%9E%B6%E6%9E%84%E7%AF%87/03.%E6%90%AD%E5%BB%BA%E7%AE%A1%E7%90%86%E5%90%8E%E5%8F%B0)
 
- 
+ 项目GITEE地址： https://gitee.com/cosmoswong/mall ，如果代码拉取速度慢，图片不加载请移步到Gitee。
 
 ## 1. 概览
 
