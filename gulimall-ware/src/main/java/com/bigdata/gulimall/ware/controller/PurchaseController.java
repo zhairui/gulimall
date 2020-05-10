@@ -2,10 +2,12 @@ package com.bigdata.gulimall.ware.controller;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 
 import com.bigdata.gulimall.ware.vo.MergeVo;
+import com.bigdata.gulimall.ware.vo.PurchaseFinishVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +31,27 @@ public class PurchaseController {
     @Autowired
     private PurchaseService purchaseService;
 
+    /**
+     * 完成采购
+     * @return
+     */
+    @PostMapping("/done")
+    public R finishPurchase(@RequestBody PurchaseFinishVo finishVo){
+        purchaseService.done(finishVo);
+        return R.ok();
+    }
+
+    /**
+     * 领取采购单
+     * @param ids 采购单ID集合
+     * @return
+     */
+    @PostMapping("/received")
+    public R received(@RequestBody List<Long> ids){
+        purchaseService.received(ids);
+
+        return R.ok();
+    }
     @PostMapping("/merge")
     public R merge(@RequestBody MergeVo mergeVo){
         purchaseService.mergePurchase(mergeVo);
