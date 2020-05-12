@@ -40,6 +40,7 @@
 | gulimall-third-party | 30000 |
 | renren-fast          | 8080  |
 | gulimall-order       | 9000  |
+| gulimall-search      | 12000  |
 
 ## FAQ
 
