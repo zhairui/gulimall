@@ -12,13 +12,17 @@
 
 ![谷粒商城-微服务架构图.jpg](doc/images/谷粒商城-微服务架构图.jpg)
 
+项目微服务：
+
+![image-20200512182015906](doc/images/image-20200512182015906.png)
+
 
 
 项目的前端页面：
 
 ![image-20200511010829465](doc/images/image-20200511010829465.png)
 
-后台管理：
+后台管理页面：
 
 ![image-20200511010920710](doc/images/image-20200511010920710.png)
 
@@ -47,4 +51,14 @@
 ### 1、[微服务太多，管理起来不方便](https://shimo.im/docs/WTPpdrDt66HxCQx6/)
 
 ### 2、[SPU管理中，修改商品规格，显示400错误状态码](https://shimo.im/docs/wpTxdcHpYRRV3dc6/)
+
+
+
+### 笔记
+
+#### 1）分布式基础
+
+#### 2）[分布式高级](https://shimo.im/docs/WWhRX8trqVtRckGj/ )
+
+#### 3）集群
 
