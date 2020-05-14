@@ -1,9 +1,13 @@
 package com.bigdata.gulimall.product.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.bigdata.gulimall.product.service.CategoryBrandRelationService;
 import com.bigdata.gulimall.product.vo.Catalog3List;
 import com.bigdata.gulimall.product.vo.Catelog2Vo;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +26,7 @@ import com.bigdata.gulimall.product.dao.CategoryDao;
 import com.bigdata.gulimall.product.entity.CategoryEntity;
 import com.bigdata.gulimall.product.service.CategoryService;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 
 @Service("categoryService")
@@ -32,6 +37,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
     @Autowired
     CategoryBrandRelationService relationService;
+
+    @Autowired
+    StringRedisTemplate redisTemplate;
 
     @Override
     public PageUtils queryPage(Map<String, Object> params) {
@@ -77,6 +85,28 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         return categoryEntities;
     }
 
+
+    @Override
+    public Map<String,List<Catelog2Vo>> getCatelogJson(){
+        //先从缓存中获取分类数据，如果没有再从数据库中查询，并且分类数据是以JSON的形式存放到Reids中的
+        String catelogJson = redisTemplate.opsForValue().get("catelogJson");
+
+        if(StringUtils.isEmpty(catelogJson)){
+            //如果缓存中没有，则查询数据库，并将查询结果放入到缓存中
+            Map<String, List<Catelog2Vo>> catelogJsonFromDb = getCatelogJsonFromDb();
+
+            redisTemplate.opsForValue().set("catelogJson",JSON.toJSONString(catelogJsonFromDb));
+
+            return catelogJsonFromDb;
+        }
+
+        Map<String, List<Catelog2Vo>> stringListMap = JSON.parseObject(catelogJson, new TypeReference<Map<String, List<Catelog2Vo>>>() {
+        });
+
+        return  stringListMap;
+    }
+
+
     /**
      * 逻辑是
      * （1）根据一级分类，找到对应的二级分类
@@ -85,8 +115,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
      * （3）将三级分类封装到Catalog3List
      * @return
      */
-    @Override
-    public Map<String, List<Catelog2Vo>> getCatelogJson() {
+    public Map<String, List<Catelog2Vo>> getCatelogJsonFromDb() {
         //一次性查询出所有的分类数据，减少对于数据库的访问次数，后面的数据操作并不是到数据库中查询，而是直接从这个集合中获取，
         // 由于分类信息的数据量并不大，所以这种方式是可行的
         List<CategoryEntity> categoryEntities = this.baseMapper.selectList(null);
