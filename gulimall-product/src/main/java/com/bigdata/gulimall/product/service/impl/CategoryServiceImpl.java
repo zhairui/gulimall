@@ -5,6 +5,7 @@ import com.alibaba.fastjson.TypeReference;
 import com.bigdata.gulimall.product.service.CategoryBrandRelationService;
 import com.bigdata.gulimall.product.vo.Catalog3List;
 import com.bigdata.gulimall.product.vo.Catelog2Vo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -14,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -28,7 +30,7 @@ import com.bigdata.gulimall.product.service.CategoryService;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-
+@Slf4j
 @Service("categoryService")
 public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity> implements CategoryService {
 
@@ -91,17 +93,30 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
         //先从缓存中获取分类数据，如果没有再从数据库中查询，并且分类数据是以JSON的形式存放到Reids中的
         String catelogJson = redisTemplate.opsForValue().get("catelogJson");
 
+        //1. 空结果缓存：解决缓存穿透
+        //2. 设置过期时间(加随机值)：解决缓存雪崩
+        //3. 加锁：解决缓存击穿
+
+        //使用DCL（双端检锁机制）来完成对于数据库的访问
         if(StringUtils.isEmpty(catelogJson)){
-            //如果缓存中没有，则查询数据库，并将查询结果放入到缓存中
-            Map<String, List<Catelog2Vo>> catelogJsonFromDb = getCatelogJsonFromDb();
+            synchronized (this){
+                String catelogJson2 = redisTemplate.opsForValue().get("catelogJson");
+                if (StringUtils.isEmpty(catelogJson2)) {
+                    //如果缓存中没有，则查询数据库，并将查询结果放入到缓存中
+                    Map<String, List<Catelog2Vo>> catelogJsonFromDb = getCatelogJsonFromDb();
 
-            redisTemplate.opsForValue().set("catelogJson",JSON.toJSONString(catelogJsonFromDb));
-
-            return catelogJsonFromDb;
+                    redisTemplate.opsForValue().set("catelogJson",JSON.toJSONString(catelogJsonFromDb),1, TimeUnit.DAYS);
+                    //log.info("缓存未命中，该线程是：{}",Thread.currentThread().getId()+" "+Thread.currentThread().getName());
+                    System.out.println("缓存未命中，该线程是："+Thread.currentThread().getName());
+                    return catelogJsonFromDb;
+                }
+            }
         }
 
         Map<String, List<Catelog2Vo>> stringListMap = JSON.parseObject(catelogJson, new TypeReference<Map<String, List<Catelog2Vo>>>() {
         });
+        //log.info("缓存命中，该线程是：{}",Thread.currentThread().getId()+" "+Thread.currentThread().getName());
+        System.out.println("缓存命中，该线程是："+" "+Thread.currentThread().getName());
 
         return  stringListMap;
     }
