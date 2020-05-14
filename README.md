@@ -60,15 +60,16 @@
 
 #### 2）分布式高级
 
-[《商城业务-商品上架(128-135)》](https://shimo.im/docs/WWhRX8trqVtRckGj/)
-
-[《商城业务-首页(136-138)》](https://shimo.im/docs/YXGWCTXdxGPxrVDQ/)
-
-[《商城业务-nginx-搭建域名访问环境(139-140)》](https://shimo.im/docs/9PVgxCPh6VVYr9jG/ )
-
-[《性能压测(141-150)》](https://shimo.im/docs/6yCRVxdQvvGHG8tP/ )
 
 
+- [《商城业务-商品上架(128-135)》](https://shimo.im/docs/WWhRX8trqVtRckGj/)
+- [《商城业务-首页(136-138)》](https://shimo.im/docs/YXGWCTXdxGPxrVDQ/)
+
+- [《商城业务-nginx-搭建域名访问环境(139-140)》](https://shimo.im/docs/9PVgxCPh6VVYr9jG/ )
+
+- [《性能压测(141-150)》](https://shimo.im/docs/6yCRVxdQvvGHG8tP/ )
+
+- [《缓存（151-172）》](https://shimo.im/docs/hYwPXtcqcWgJjcGH/ )
 
 
 
