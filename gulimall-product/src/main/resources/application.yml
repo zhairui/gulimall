@@ -34,4 +34,6 @@ mybatis-plus:
 logging:
   level:
    # com.bigdata.gulimall.product: debug
-    root: error
+    root: warn
+  pattern:
+    console: "%d{yyyy-MM-dd} [%thread] - %msg%n"

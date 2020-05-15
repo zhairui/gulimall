@@ -9,12 +9,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
+import org.springframework.data.redis.core.script.DefaultScriptExecutor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -95,42 +94,79 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
         //1. 空结果缓存：解决缓存穿透
         //2. 设置过期时间(加随机值)：解决缓存雪崩
-        //3. 加锁：解决缓存击穿
-
-        //使用DCL（双端检锁机制）来完成对于数据库的访问
+        //3. 加锁：解决缓存击穿（使用分布式锁）
         if(StringUtils.isEmpty(catelogJson)){
-            synchronized (this){
-                String catelogJson2 = redisTemplate.opsForValue().get("catelogJson");
-                if (StringUtils.isEmpty(catelogJson2)) {
-                    //如果缓存中没有，则查询数据库，并将查询结果放入到缓存中
-                    Map<String, List<Catelog2Vo>> catelogJsonFromDb = getCatelogJsonFromDb();
 
-                    redisTemplate.opsForValue().set("catelogJson",JSON.toJSONString(catelogJsonFromDb),1, TimeUnit.DAYS);
-                    //log.info("缓存未命中，该线程是：{}",Thread.currentThread().getId()+" "+Thread.currentThread().getName());
-                    System.out.println("缓存未命中，该线程是："+Thread.currentThread().getName());
-                    return catelogJsonFromDb;
-                }
-            }
+            Map<String, List<Catelog2Vo>> catelogJsonFromDb = getCatelogJsonFromDbWithRedisLock();
+
+            return catelogJsonFromDb;
+
         }
 
         Map<String, List<Catelog2Vo>> stringListMap = JSON.parseObject(catelogJson, new TypeReference<Map<String, List<Catelog2Vo>>>() {
         });
-        //log.info("缓存命中，该线程是：{}",Thread.currentThread().getId()+" "+Thread.currentThread().getName());
-        System.out.println("缓存命中，该线程是："+" "+Thread.currentThread().getName());
+        log.warn("缓存命中");
 
         return  stringListMap;
+    }
+
+    /**
+     * 使用分布式锁来实现多个服务共享同一缓存中的数据
+     * （1）设置读写锁，失败则表明其他线程先于该线程获取到了锁，则执行自旋，成功则表明获取到了锁
+     * （2）获取锁成功，查询数据库，获取分类数据
+     * （3）释放锁
+     * @return
+     */
+    public Map<String, List<Catelog2Vo>> getCatelogJsonFromDbWithRedisLock() {
+        String uuid= UUID.randomUUID().toString();
+        //设置redis分布式锁，成功则返回true，否则返回false，该操作是原子性的
+        Boolean lock = redisTemplate.opsForValue().setIfAbsent("lock", uuid, 300, TimeUnit.SECONDS);
+        if(lock==null || !lock){
+            //获取锁失败，重试
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+
+            }
+            log.warn("获取锁失败，重新获取...");
+           return getCatelogJsonFromDbWithRedisLock();
+        }else{
+            //获取锁成功
+            log.warn("获取锁成功:)");
+            Map<String, List<Catelog2Vo>> catelogJsonFromDb;
+            try {
+                //从数据库中查询分类数据
+                catelogJsonFromDb = getCatelogJsonFromDb();
+            } finally {
+                //确保一定会释放锁
+                String script="if redis.call('get',KEYS[1]) == ARGV[1] then return redis.call('del',KEYS[1]) else return 0 end";
+                redisTemplate.execute(new DefaultRedisScript(script,Long.class),Arrays.asList("lock"),uuid);
+                log.warn("释放锁成功:)");
+            }
+            return catelogJsonFromDb;
+        }
+
     }
 
 
     /**
      * 逻辑是
+     * （0）首先查询Redis缓存中是否有分类数据信息，有则返回，否则继续执行
      * （1）根据一级分类，找到对应的二级分类
      * （2）将得到的二级分类，封装到Catelog2Vo中
      * （3）根据二级分类，得到对应的三级分类
      * （3）将三级分类封装到Catalog3List
+     * （4）将查询结果放入到Redis中
      * @return
      */
     public Map<String, List<Catelog2Vo>> getCatelogJsonFromDb() {
+        //先从redis缓存中查询，如果有数据，则返回查询结果
+        String catelogJson = redisTemplate.opsForValue().get("catelogJson");
+        if(!StringUtils.isEmpty(catelogJson)){
+            log.warn("从缓存中获取数据");
+            return JSON.parseObject(catelogJson, new TypeReference<Map<String, List<Catelog2Vo>>>(){});
+        }
+        log.warn("查询数据库");
         //一次性查询出所有的分类数据，减少对于数据库的访问次数，后面的数据操作并不是到数据库中查询，而是直接从这个集合中获取，
         // 由于分类信息的数据量并不大，所以这种方式是可行的
         List<CategoryEntity> categoryEntities = this.baseMapper.selectList(null);
@@ -163,6 +199,11 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryDao, CategoryEntity
 
             return catelog2Vos;
         }));
+
+        //将查询结果放入到redis中
+        redisTemplate.opsForValue().set("catelogJson",JSON.toJSONString(parent_cid),1, TimeUnit.DAYS);
+
+
         return parent_cid;
     }
 
