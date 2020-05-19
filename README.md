@@ -20,13 +20,15 @@
 
 项目的前端页面：
 
+![image-20200519171255785](doc/images/image-20200519171255785.png)
+
+
+
+项目的后台管理页面：
+
 ![image-20200511010829465](doc/images/image-20200511010829465.png)
 
-后台管理页面：
-
 ![image-20200511010920710](doc/images/image-20200511010920710.png)
-
-
 
 项目所创建的微服务
 
@@ -58,9 +60,11 @@
 
 #### 1）分布式基础
 
+* [分布式基础（初稿）](https://gitee.com/cosmoswong/markdownblog/blob/master/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E%E2%80%94%E5%88%86%E5%B8%83%E5%BC%8F%E5%9F%BA%E7%A1%80.md)
+
 #### 2）分布式高级
 
-* [分布式高级](https://gitee.com/cosmoswong/markdownblog/blob/master/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E%E2%80%94%E5%88%86%E5%B8%83%E5%BC%8F%E9%AB%98%E7%BA%A7.md)
+* [分布式高级（初稿）](https://gitee.com/cosmoswong/markdownblog/blob/master/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E%E2%80%94%E5%88%86%E5%B8%83%E5%BC%8F%E9%AB%98%E7%BA%A7.md)
 - [《商城业务-商品上架(128-135)》](https://shimo.im/docs/WWhRX8trqVtRckGj/)
 - [《商城业务-首页(136-138)》](https://shimo.im/docs/YXGWCTXdxGPxrVDQ/)
 - [《商城业务-nginx-搭建域名访问环境(139-140)》](https://shimo.im/docs/9PVgxCPh6VVYr9jG/ )
@@ -73,6 +77,10 @@
 
 #### 3）集群
 
-* [高可用集群](https://gitee.com/cosmoswong/markdownblog/blob/master/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E%E2%80%94%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4.md)
+* [高可用集群（初稿）](https://gitee.com/cosmoswong/markdownblog/blob/master/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E%E2%80%94%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4.md)
 
 
+
+知识在于分享，个人能力时间有限，欢迎各位道友补充完善。如有任何疑问请联系： cosmoswong@sina.com 
+
+Best wish for you！
