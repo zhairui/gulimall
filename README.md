@@ -60,11 +60,9 @@
 
 #### 2）分布式高级
 
-
-
+* [分布式高级](https://gitee.com/cosmoswong/markdownblog/blob/master/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E%E2%80%94%E5%88%86%E5%B8%83%E5%BC%8F%E9%AB%98%E7%BA%A7.md)
 - [《商城业务-商品上架(128-135)》](https://shimo.im/docs/WWhRX8trqVtRckGj/)
 - [《商城业务-首页(136-138)》](https://shimo.im/docs/YXGWCTXdxGPxrVDQ/)
-
 - [《商城业务-nginx-搭建域名访问环境(139-140)》](https://shimo.im/docs/9PVgxCPh6VVYr9jG/ )
 
 - [《性能压测(141-150)》](https://shimo.im/docs/6yCRVxdQvvGHG8tP/ )
@@ -74,4 +72,7 @@
 
 
 #### 3）集群
+
+* [高可用集群](https://gitee.com/cosmoswong/markdownblog/blob/master/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E/%E8%B0%B7%E7%B2%92%E5%95%86%E5%9F%8E%E2%80%94%E9%AB%98%E5%8F%AF%E7%94%A8%E9%9B%86%E7%BE%A4.md)
+
 
