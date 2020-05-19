@@ -1,9 +1,12 @@
 package com.bigdata.gulimall.search.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.bigdata.common.to.es.SkuEsModel;
+import com.bigdata.common.utils.R;
 import com.bigdata.gulimall.search.config.GulimallElasticSearchConfig;
 import com.bigdata.gulimall.search.constant.EsConstant;
+import com.bigdata.gulimall.search.feign.ProductFeignService;
 import com.bigdata.gulimall.search.service.MallSearchService;
 import com.bigdata.gulimall.search.vo.*;
 import lombok.extern.slf4j.Slf4j;
@@ -17,9 +20,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.nested.NestedAggregationBuilder;
 import org.elasticsearch.search.aggregations.bucket.nested.ParsedNested;
 import org.elasticsearch.search.aggregations.bucket.terms.ParsedLongTerms;
@@ -45,6 +46,11 @@ public class MallSearchServiceImpl implements MallSearchService {
 
     @Autowired
     RestHighLevelClient client;
+
+
+    @Autowired
+    ProductFeignService productFeignService;
+
 
     //去es中进行检索
     @Override
@@ -179,6 +185,29 @@ public class MallSearchServiceImpl implements MallSearchService {
         }
 
         result.setPageNavs(page);
+
+
+//        //构建面包屑导航功能
+//        List<SearchReult.NavVo> navVos = param.getAttrs().stream().map(item -> {
+//            SearchReult.NavVo navVo = new SearchReult.NavVo();
+//            String[] s = item.split("_");
+//            navVo.setNavValue(s[1]);
+//
+//            R info = productFeignService.info(Long.parseLong(s[0]));
+//            if(info.getCode() == 0){
+//                AttrResponseVo data = info.getData("attr", new TypeReference<AttrResponseVo>() {
+//                });
+//                navVo.setNavName(data.getAttrName());
+//            }else {
+//                navVo.setNavName(s[0]);
+//            }
+//
+//            //2.取消了面包屑后，要跳转到什么地方，将请求地址的URL置空
+//            return navVo;
+//        }).collect(Collectors.toList());
+//
+//        result.setNavs(navVos);
+
 
         return result;
     }

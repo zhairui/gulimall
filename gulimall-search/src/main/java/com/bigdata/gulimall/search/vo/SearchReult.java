@@ -35,4 +35,15 @@ public class SearchReult {
     //查询所涉及到的所有分类信息
     private List<CatelogVo> catelogs;
 
+
+    //面包屑导航
+    private List<NavVo> navs;
+
+    @Data
+    public static class NavVo{
+        private String navName;
+        private String navValue;
+        private String link;
+    }
+
 }

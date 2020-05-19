@@ -12,6 +12,13 @@
         <result property="attrValue" column="attr_value"/>
         <result property="attrSort" column="attr_sort"/>
     </resultMap>
+    <select id="getSaleAttrsBySpuId" resultType="com.bigdata.gulimall.product.vo.SkuItemSaleAttrVo">
+        select pssav.attr_id,pssav.attr_name,group_concat(distinct pssav.attr_value) attrValues
+        from pms_sku_info pki
+        left join pms_sku_sale_attr_value pssav on pki.sku_id = pssav.sku_id
+        where pki.spu_id=#{spuId}
+        group by pssav.attr_id,pssav.attr_name
+    </select>
 
 
 </mapper>

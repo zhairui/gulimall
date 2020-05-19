@@ -22,7 +22,12 @@ import java.util.Map;
  */
 public class R extends HashMap<String, Object> {
 	private static final long serialVersionUID = 1L;
-
+	public <T> T  getData(String key,TypeReference<T> tTypeReference){
+		Object data = get(key);
+		String jsonString = JSON.toJSONString(data);
+		T t = JSON.parseObject(jsonString, tTypeReference);
+		return t;
+	}
 	public <T> T  getData(TypeReference<T> tTypeReference){
 		Object data = get("data");
 		String jsonString = JSON.toJSONString(data);

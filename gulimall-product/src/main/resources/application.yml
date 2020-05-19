@@ -33,7 +33,7 @@ mybatis-plus:
   mapper-locations: classpath:/mapper/**/*.xml
 logging:
   level:
-    com.bigdata.gulimall.product: info
+    com.bigdata.gulimall.product: debug
     root: warn
   pattern:
     console: "%d{yyyy-MM-dd} [%thread] - %msg%n"
